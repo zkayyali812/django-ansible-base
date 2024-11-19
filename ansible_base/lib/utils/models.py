@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import asdict, dataclass
 from itertools import chain
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from crum import get_current_user
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from inflection import underscore
@@ -16,6 +17,10 @@ from ansible_base.lib.utils.encryption import ENCRYPTED_STRING
 from ansible_base.lib.utils.string import make_json_safe
 
 logger = logging.getLogger('ansible_base.lib.utils.models')
+
+# Handle type hints of AbstractUser during linting
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 
 def get_all_field_names(model, concrete_only=False, include_attnames=True):
@@ -83,6 +88,8 @@ def is_system_user(user: Optional[models.Model]) -> bool:
     """
     Takes a model and returns a boolean if its a user whose username is the same as the SYSTEM_USERNAME setting
     """
+    from django.contrib.auth.models import AbstractUser
+
     system_username = get_system_username()[0]
     if user is None or not isinstance(user, AbstractUser) or system_username is None:
         # If we didn't get anything or that thing isn't an AbstractUser or system_username is not set set than what we have can't be the system user
@@ -95,6 +102,7 @@ class NotARealException(Exception):
 
 
 def get_system_user() -> Optional[AbstractUser]:
+
     from ansible_base.lib.abstract_models.user import AbstractDABUser
 
     system_username, setting_name = get_system_username()
@@ -142,6 +150,8 @@ def current_user_or_system_user() -> Optional[AbstractUser]:
 
 
 def is_encrypted_field(model, field_name):
+    from django.contrib.auth.models import AbstractUser
+
     if model is None:
         return False
 
