@@ -1,6 +1,6 @@
 ansible  # Used in build process to generate some configs
 build
-Django==4.2.16
+django==4.2.17
 django-debug-toolbar
 django-extensions
 djangorestframework
@@ -15,6 +15,6 @@ pytest-xdist
 pytest-cov
 pytest-django
 setuptools-scm
-sqlparse==0.5.0
+sqlparse==0.5.2
 psycopg[binary]
 sdb
