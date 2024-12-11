@@ -88,11 +88,9 @@ def test_authenticators_cli_initialize(django_user_model):
     # Sanity check:
     assert django_user_model.objects.count() == 0
 
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
+    with pytest.raises(CommandError) as e:
         call_command('authenticators', "--initialize", stdout=out, stderr=err)
-    assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == 255
-    assert "No admin user exists" in err.getvalue()
+    assert "Admin user with username 'admin' not defined." in str(e.value)
 
     django_user_model.objects.create(username="admin")
     call_command('authenticators', "--initialize", stdout=out, stderr=err)

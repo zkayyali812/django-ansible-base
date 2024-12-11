@@ -1,5 +1,3 @@
-from sys import exit
-
 try:
     from tabulate import tabulate
 
@@ -62,8 +60,7 @@ class Command(BaseCommand):
     def initialize_authenticators(self):
         admin_user = get_user_model().objects.filter(username="admin").first()
         if not admin_user:
-            self.stderr.write("No admin user exists")
-            exit(255)
+            raise CommandError("Admin user with username 'admin' not defined.")
 
         existing_authenticator = Authenticator.objects.filter(type="ansible_base.authentication.authenticator_plugins.local").first()
         if not existing_authenticator:
