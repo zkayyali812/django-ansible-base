@@ -3,6 +3,8 @@ from typing import Optional
 
 from ansible_base.lib.cache.fallback_cache import FALLBACK_CACHE, PRIMARY_CACHE
 
+from .flags import get_platform_flags
+
 #
 # If you are adding a new dynamic setting:
 #     Please be sure to modify pyproject.toml with your new settings in tool.setuptools.dynamic
@@ -303,9 +305,7 @@ def get_dab_settings(
         dab_data['INSTALLED_APPS'].append('flags')
 
         # The "global feature flags"
-        dab_data['FLAGS'] = {
-            'SOME_PLATFORM_FLAG': [],
-        }
+        dab_data['FLAGS'] = get_platform_flags()
 
         # Feature flags specific to a service
         dab_data['ANSIBLE_BASE_SERVICE_FEATURE_FLAGS'] = {}
