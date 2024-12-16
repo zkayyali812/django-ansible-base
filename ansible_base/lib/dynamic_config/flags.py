@@ -22,11 +22,8 @@ def get_component_flags(component):
     return flags
 
 
-EDA_FLAGS = get_component_flags('eda')
-CONTROLLER_FLAGS = get_component_flags('controller')
-HUB_FLAGS = get_component_flags('hub')
-GATEWAY_FLAGS = get_component_flags('gateway')
-
-
 def get_platform_flags():
-    return EDA_FLAGS | CONTROLLER_FLAGS | HUB_FLAGS | GATEWAY_FLAGS
+    flags = {}
+    for flag in FEATURE_FLAGS:
+        flags[flag['name']] = flag['conditions']
+    return flags
