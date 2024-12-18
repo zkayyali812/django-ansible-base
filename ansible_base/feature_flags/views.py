@@ -3,9 +3,8 @@ from rest_framework.response import Response
 
 from ansible_base.feature_flags.models import FeatureFlag
 from ansible_base.feature_flags.serializers import FeatureFlagSerializer
+from ansible_base.lib.dynamic_config.flags import get_feature_flags_detail
 from ansible_base.lib.utils.views.ansible_base import AnsibleBaseView
-
-from .utils import get_feature_flags
 
 
 class FeatureFlagsListView(AnsibleBaseView):
@@ -20,10 +19,10 @@ class FeatureFlagsListView(AnsibleBaseView):
     http_method_names = ['get', 'head']
 
     def get(self, request, format=None):
-        return Response(get_feature_flags())
+        return Response(get_feature_flags_detail())
 
     def get_queryset(self):
-        return get_feature_flags()
+        return get_feature_flags_detail()
 
 
 class FeatureFlagDetailView(AnsibleBaseView):
