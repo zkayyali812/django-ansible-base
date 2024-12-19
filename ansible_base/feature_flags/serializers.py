@@ -1,7 +1,6 @@
 from flags.state import disable_flag, enable_flag, flag_enabled
 from rest_framework import serializers
 
-from ansible_base.feature_flags.models import FeatureFlag
 from ansible_base.lib.dynamic_config.flags import get_feature_flags_detail
 
 
@@ -29,9 +28,9 @@ class FeatureFlagSerializer(serializers.Serializer):
     def validate_and_save(self, data: dict) -> dict:
         if not self.category_slug:
             return {}
-        if "state" not in data[self.category_slug]:
+        if "state" not in data:
             return {}
-        toggled_state = data[self.category_slug]["state"]
+        toggled_state = data["state"]
         if not isinstance(toggled_state, bool):
             return {}
 
