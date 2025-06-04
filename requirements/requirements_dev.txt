@@ -12,7 +12,7 @@ isort==6.0.0            # Linting tool, if changed update pyproject.toml as well
 tox
 tox-docker
 typeguard
-pytest
+pytest>=8.4.0
 pytest-asyncio
 pytest-xdist
 pytest-cov
