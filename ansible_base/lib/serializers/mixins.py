@@ -1,5 +1,6 @@
 import logging
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
@@ -28,6 +29,41 @@ class ImmutableFieldsMixin(serializers.ModelSerializer):
             kwargs[field]["read_only"] = bool(self.instance)
 
         return kwargs
+
+
+class TextInputValidationMixin:
+    """
+    Serializer mixin that validates text fields against an allowlist of permitted
+    characters per OWASP CWE-20 and NIST SP 800-53 SI-10.
+
+    Only validates fields present in the request payload, so existing data
+    from upgrades is grandfathered in.
+
+    Configure on the serializer class:
+        validated_name_fields = ('name',)
+        resource_name_validator = custom_validator  # optional override
+    """
+
+    validated_name_fields = ('name',)
+    resource_name_validator = None
+
+    def validate(self, attrs):
+        from ansible_base.lib.utils.validation import validate_resource_name as default_validator
+
+        validator = self.resource_name_validator or default_validator
+        errors = {}
+        for field_name in self.validated_name_fields:
+            if field_name not in attrs or not isinstance(attrs[field_name], str):
+                continue
+            if self.instance is not None and getattr(self.instance, field_name, None) == attrs[field_name]:
+                continue
+            try:
+                validator(attrs[field_name])
+            except DjangoValidationError as e:
+                errors[field_name] = e.messages
+        if errors:
+            raise serializers.ValidationError(errors)
+        return super().validate(attrs)
 
 
 class EmailAdminOnlyMixin:

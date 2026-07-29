@@ -11,11 +11,20 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.x509 import load_pem_x509_certificate
 from django.core.exceptions import ValidationError as LowLevelValidationError
-from django.core.validators import URLValidator
+from django.core.validators import RegexValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ValidationError
 
 VALID_STRING = _('Must be a valid string')
+
+RESOURCE_NAME_PATTERN = r'^[a-zA-Z0-9 _-]+$'
+
+validate_resource_name = RegexValidator(
+    regex=RESOURCE_NAME_PATTERN,
+    message=_("This field contains invalid characters. "
+              "Only alphanumeric characters, spaces, hyphens, and underscores are allowed."),
+    code='invalid_resource_name',
+)
 
 
 def validate_url_list(urls: list, schemes: list = ['https'], allow_plain_hostname: bool = False) -> None:
